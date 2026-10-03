@@ -86,6 +86,7 @@ fn sync_task_creates_story_subtask_and_blocker_link() {
         .create();
     let create_root = server
         .mock("POST", "/stories")
+        .match_header("user-agent", "dexrust")
         .match_body(Matcher::PartialJson(serde_json::json!({
             "name": "Root",
             "description": render_story_description(&root),

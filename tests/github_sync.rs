@@ -74,6 +74,7 @@ fn sync_task_creates_issue_with_hierarchy_body_and_labels() {
     let create = server
         .mock("POST", "/repos/acme/widgets/issues")
         .match_header("authorization", "Bearer token-123")
+        .match_header("user-agent", "dexrust")
         .match_body(Matcher::PartialJson(serde_json::json!({
             "title": "Root task",
             "labels": ["dex", "dex:priority-2", "dex:pending"],

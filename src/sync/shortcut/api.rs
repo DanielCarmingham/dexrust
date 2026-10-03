@@ -213,14 +213,14 @@ impl ShortcutClient {
             builder
                 .header("Shortcut-Token", &self.token)
                 .header("Content-Type", "application/json")
-                .header("User-Agent", "dexrs")
+                .header("User-Agent", "dexrust")
         };
         let response = match (method, body) {
             ("GET", _) => self
                 .agent
                 .get(&url)
                 .header("Shortcut-Token", &self.token)
-                .header("User-Agent", "dexrs")
+                .header("User-Agent", "dexrust")
                 .call(),
             ("POST", Some(body)) => with_body(self.agent.post(&url)).send_json(body),
             ("PUT", Some(body)) => with_body(self.agent.put(&url)).send_json(body),

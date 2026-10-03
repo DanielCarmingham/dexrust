@@ -134,7 +134,7 @@ impl GitHubClient {
                 .get(&url)
                 .header("Authorization", &format!("Bearer {}", self.token))
                 .header("Accept", "application/vnd.github+json")
-                .header("User-Agent", "dexrs")
+                .header("User-Agent", "dexrust")
                 .call();
             let mut response =
                 response.map_err(|error| anyhow!("GitHub request failed: {error}"))?;
@@ -166,7 +166,7 @@ impl GitHubClient {
             builder
                 .header("Authorization", &format!("Bearer {}", self.token))
                 .header("Accept", "application/vnd.github+json")
-                .header("User-Agent", "dexrs")
+                .header("User-Agent", "dexrust")
         };
         let response = match (method, body) {
             ("GET", _) => self
@@ -174,7 +174,7 @@ impl GitHubClient {
                 .get(&url)
                 .header("Authorization", &format!("Bearer {}", self.token))
                 .header("Accept", "application/vnd.github+json")
-                .header("User-Agent", "dexrs")
+                .header("User-Agent", "dexrust")
                 .call(),
             ("POST", Some(body)) => request(self.agent.post(&url)).send_json(body),
             ("PATCH", Some(body)) => request(self.agent.patch(&url)).send_json(body),
