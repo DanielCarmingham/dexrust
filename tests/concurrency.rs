@@ -1,5 +1,5 @@
-use dexrs::store::{read_tasks, transact};
-use dexrs::task::Task;
+use dexrust::store::{read_tasks, transact};
+use dexrust::task::Task;
 use std::process::{Command, Stdio};
 
 fn task(id: &str) -> Task {
@@ -82,7 +82,7 @@ fn concurrent_create_processes_keep_all_tasks() {
 
     let mut children = Vec::new();
     for index in 0..20 {
-        let mut command = Command::new(assert_cmd::cargo::cargo_bin("dexrs"));
+        let mut command = Command::new(assert_cmd::cargo::cargo_bin("dexrust"));
         children.push(
             command
                 .env("DEX_STORAGE_PATH", &store)

@@ -1,12 +1,12 @@
-use dexrs::sync::github::body::{
+use dexrust::sync::github::body::{
     collect_descendants, parse_hierarchical_issue_body, parse_root_task_metadata,
     render_issue_body, render_task_metadata_comments,
 };
-use dexrs::sync::github::remote::{GitHubRepo, parse_github_url, parse_issue_ref};
-use dexrs::sync::shortcut::story::{parse_story_description, render_story_description};
-use dexrs::sync::state::{parse_duration_ms, read_sync_state, write_sync_state};
-use dexrs::sync::{decode_metadata_value, encode_metadata_value};
-use dexrs::task::Task;
+use dexrust::sync::github::remote::{GitHubRepo, parse_github_url, parse_issue_ref};
+use dexrust::sync::shortcut::story::{parse_story_description, render_story_description};
+use dexrust::sync::state::{parse_duration_ms, read_sync_state, write_sync_state};
+use dexrust::sync::{decode_metadata_value, encode_metadata_value};
+use dexrust::task::Task;
 
 fn task(id: &str, name: &str, parent: Option<&str>) -> Task {
     let mut task = Task::new(id.to_string(), name.to_string(), None, None);
@@ -275,13 +275,13 @@ fn commit_on_remote_falls_back_to_upstream_when_origin_head_is_unset() {
         "fresh remote has no origin/HEAD, which is the case under test"
     );
 
-    assert!(dexrs::sync::is_commit_on_remote(&work, &pushed));
+    assert!(dexrust::sync::is_commit_on_remote(&work, &pushed));
 
     git(
         &work,
         &["commit", "-q", "--allow-empty", "-m", "local only"],
     );
     let local = git(&work, &["rev-parse", "HEAD"]);
-    assert!(!dexrs::sync::is_commit_on_remote(&work, &local));
-    assert!(!dexrs::sync::is_commit_on_remote(&work, "0000000"));
+    assert!(!dexrust::sync::is_commit_on_remote(&work, &local));
+    assert!(!dexrust::sync::is_commit_on_remote(&work, "0000000"));
 }

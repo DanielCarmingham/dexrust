@@ -1,4 +1,4 @@
-use dexrs::task::Task;
+use dexrust::task::Task;
 use mockito::{Matcher, Server, ServerGuard};
 use predicates::prelude::*;
 
@@ -58,7 +58,7 @@ impl Fixture {
     }
 
     fn cmd(&self) -> assert_cmd::Command {
-        let mut command = assert_cmd::Command::cargo_bin("dexrs").unwrap();
+        let mut command = assert_cmd::Command::cargo_bin("dexrust").unwrap();
         command
             .current_dir(self.temp.path())
             .env("DEX_HOME", self.temp.path().join("dex-home"))
@@ -91,7 +91,7 @@ impl Fixture {
     }
 
     fn tasks(&self) -> Vec<Task> {
-        dexrs::store::read_tasks(&self.store()).unwrap()
+        dexrust::store::read_tasks(&self.store()).unwrap()
     }
 
     fn task(&self, id: &str) -> Task {
@@ -142,7 +142,7 @@ fn sync_dry_run_lists_actions_without_calling_the_api() {
         Some(serde_json::json!({"github": {"issueNumber": 3}}));
     std::fs::write(
         fx.store().join("tasks.jsonl"),
-        dexrs::task::serialize_tasks_jsonl(&tasks).unwrap(),
+        dexrust::task::serialize_tasks_jsonl(&tasks).unwrap(),
     )
     .unwrap();
     fx.enable_github(false);
@@ -387,7 +387,7 @@ fn import_all_imports_labelled_issues_and_skips_known_ones() {
     tasks[0].metadata = Some(serde_json::json!({"github": {"issueNumber": 1}}));
     std::fs::write(
         fx.store().join("tasks.jsonl"),
-        dexrs::task::serialize_tasks_jsonl(&tasks).unwrap(),
+        dexrust::task::serialize_tasks_jsonl(&tasks).unwrap(),
     )
     .unwrap();
     let _list = fx.mock_list(serde_json::json!([
@@ -434,7 +434,7 @@ fn export_creates_issue_without_saving_metadata_and_skips_synced_tasks() {
         .metadata = Some(serde_json::json!({"github": {"issueNumber": 9}}));
     std::fs::write(
         fx.store().join("tasks.jsonl"),
-        dexrs::task::serialize_tasks_jsonl(&tasks).unwrap(),
+        dexrust::task::serialize_tasks_jsonl(&tasks).unwrap(),
     )
     .unwrap();
     let _list = fx.mock_list(serde_json::json!([]));

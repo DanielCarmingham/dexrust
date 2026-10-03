@@ -1,5 +1,5 @@
-use dexrs::task::{Task, parse_tasks_jsonl, serialize_tasks_jsonl};
-use dexrs::validate::{validate_completion, validate_tasks};
+use dexrust::task::{Task, parse_tasks_jsonl, serialize_tasks_jsonl};
+use dexrust::validate::{validate_completion, validate_tasks};
 
 #[test]
 fn parses_dex_compatible_jsonl_fixture() {

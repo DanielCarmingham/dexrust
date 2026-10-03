@@ -2,7 +2,7 @@ use clap::{Parser, Subcommand};
 
 #[derive(Debug, Parser)]
 #[command(
-    name = "dexrs",
+    name = "dexrust",
     version = concat!("v", env!("CARGO_PKG_VERSION")),
     disable_help_subcommand = true
 )]

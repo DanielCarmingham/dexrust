@@ -7,7 +7,7 @@ fn dir_uses_dex_storage_path_when_set() {
     let store = temp.path().join("custom-store");
     std::fs::create_dir(&cwd).unwrap();
 
-    let output = assert_cmd::Command::cargo_bin("dexrs")
+    let output = assert_cmd::Command::cargo_bin("dexrust")
         .unwrap()
         .current_dir(&cwd)
         .env("DEX_HOME", temp.path().join("dex-home"))
@@ -38,7 +38,7 @@ fn dir_uses_git_root_dex_store_inside_repo() {
         .output()
         .expect("git init should run");
 
-    let output = assert_cmd::Command::cargo_bin("dexrs")
+    let output = assert_cmd::Command::cargo_bin("dexrust")
         .unwrap()
         .current_dir(&nested)
         .env("DEX_HOME", temp.path().join("dex-home"))
@@ -64,7 +64,7 @@ fn dir_uses_home_config_fallback_outside_git_repo() {
     std::fs::create_dir(&cwd).unwrap();
     std::fs::create_dir(&home).unwrap();
 
-    let output = assert_cmd::Command::cargo_bin("dexrs")
+    let output = assert_cmd::Command::cargo_bin("dexrust")
         .unwrap()
         .current_dir(&cwd)
         .env_remove("DEX_STORAGE_PATH")
@@ -107,7 +107,7 @@ fn git(dir: &std::path::Path, args: &[&str]) -> String {
 }
 
 fn dir_output(cwd: &std::path::Path, home: &std::path::Path, path_env: Option<&str>) -> String {
-    let mut command = assert_cmd::Command::cargo_bin("dexrs").unwrap();
+    let mut command = assert_cmd::Command::cargo_bin("dexrust").unwrap();
     command
         .current_dir(cwd)
         .env_remove("DEX_STORAGE_PATH")

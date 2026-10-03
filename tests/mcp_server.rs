@@ -11,7 +11,7 @@ struct Mcp {
 
 impl Mcp {
     fn start(store: &std::path::Path) -> Self {
-        let child = Command::new(env!("CARGO_BIN_EXE_dexrs"))
+        let child = Command::new(env!("CARGO_BIN_EXE_dexrust"))
             .arg("mcp")
             .env("DEX_STORAGE_PATH", store)
             .env("DEX_HOME", store.join("dex-home"))
@@ -178,7 +178,7 @@ fn mcp_tools_create_update_list_and_delete_tasks() {
     assert_eq!(deleted["deleted"], true);
     assert_eq!(deleted["id"], parent_id);
     assert_eq!(deleted["task"]["name"], "Parent");
-    assert!(dexrs::store::read_tasks(&store).unwrap().is_empty());
+    assert!(dexrust::store::read_tasks(&store).unwrap().is_empty());
 }
 
 #[test]

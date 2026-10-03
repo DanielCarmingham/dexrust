@@ -1,15 +1,15 @@
-use dexrs::task::Task;
+use dexrust::task::Task;
 use predicates::prelude::PredicateBooleanExt;
 
 fn read_tasks(store: &std::path::Path) -> Vec<Task> {
-    dexrs::store::read_tasks(store).unwrap()
+    dexrust::store::read_tasks(store).unwrap()
 }
 
 #[test]
-fn dexrs_dir_prints_store_path_from_env() {
+fn dexrust_dir_prints_store_path_from_env() {
     let temp = tempfile::tempdir().unwrap();
     let store = temp.path().join("store");
-    let output = dexrs(&store)
+    let output = dexrust(&store)
         .arg("dir")
         .assert()
         .success()
@@ -29,7 +29,7 @@ fn create_and_add_write_new_tasks() {
     let store = temp.path().join("store");
 
     for (command, name) in [("create", "First task"), ("add", "Second task")] {
-        dexrs(&store).args([command, name]).assert().success();
+        dexrust(&store).args([command, name]).assert().success();
     }
 
     let tasks = read_tasks(&store);
@@ -44,13 +44,13 @@ fn start_marks_task_in_progress() {
     let temp = tempfile::tempdir().unwrap();
     let store = temp.path().join("store");
 
-    dexrs(&store)
+    dexrust(&store)
         .args(["create", "Start me"])
         .assert()
         .success();
     let id = read_tasks(&store)[0].id.clone();
 
-    dexrs(&store).args(["start", &id]).assert().success();
+    dexrust(&store).args(["start", &id]).assert().success();
 
     let task = read_tasks(&store).pop().unwrap();
     assert_eq!(task.id, id);
@@ -67,14 +67,14 @@ fn complete_and_done_mark_task_complete_with_result() {
         ("Complete me", "complete", "finished"),
         ("Done me", "done", "also finished"),
     ] {
-        dexrs(&store).args(["create", name]).assert().success();
+        dexrust(&store).args(["create", name]).assert().success();
         let id = read_tasks(&store)
             .into_iter()
             .find(|task| task.name == name)
             .unwrap()
             .id;
 
-        dexrs(&store)
+        dexrust(&store)
             .args([command, &id, "--result", result])
             .assert()
             .success();
@@ -100,10 +100,10 @@ fn edit_and_update_change_task_fields() {
     let temp = tempfile::tempdir().unwrap();
     let store = temp.path().join("store");
 
-    dexrs(&store).args(["create", "Old"]).assert().success();
+    dexrust(&store).args(["create", "Old"]).assert().success();
     let id = read_tasks(&store)[0].id.clone();
 
-    dexrs(&store)
+    dexrust(&store)
         .args([
             "edit",
             &id,
@@ -117,7 +117,7 @@ fn edit_and_update_change_task_fields() {
         .assert()
         .success();
 
-    dexrs(&store)
+    dexrust(&store)
         .args(["update", &id, "--priority", "2"])
         .assert()
         .success();
@@ -138,14 +138,14 @@ fn delete_remove_and_rm_delete_tasks() {
         ("Remove me", "remove"),
         ("Rm me", "rm"),
     ] {
-        dexrs(&store).args(["create", name]).assert().success();
+        dexrust(&store).args(["create", name]).assert().success();
         let id = read_tasks(&store)
             .into_iter()
             .find(|task| task.name == name)
             .unwrap()
             .id;
 
-        dexrs(&store).args([command, &id]).assert().success();
+        dexrust(&store).args([command, &id]).assert().success();
     }
 
     assert!(read_tasks(&store).is_empty());
@@ -156,15 +156,18 @@ fn list_and_ls_print_status_icons() {
     let temp = tempfile::tempdir().unwrap();
     let store = temp.path().join("store");
 
-    dexrs(&store).args(["create", "List me"]).assert().success();
+    dexrust(&store)
+        .args(["create", "List me"])
+        .assert()
+        .success();
 
-    dexrs(&store)
+    dexrust(&store)
         .arg("list")
         .assert()
         .success()
         .stdout(predicates::str::contains("[ ]").and(predicates::str::contains("List me")));
 
-    dexrs(&store)
+    dexrust(&store)
         .arg("ls")
         .assert()
         .success()
@@ -176,13 +179,13 @@ fn show_prints_task_details_by_id() {
     let temp = tempfile::tempdir().unwrap();
     let store = temp.path().join("store");
 
-    dexrs(&store)
+    dexrust(&store)
         .args(["create", "Show me", "--description", "Details"])
         .assert()
         .success();
     let id = read_tasks(&store)[0].id.clone();
 
-    dexrs(&store)
+    dexrust(&store)
         .args(["show", &id])
         .assert()
         .success()
@@ -194,7 +197,7 @@ fn read_commands_support_json_output() {
     let temp = tempfile::tempdir().unwrap();
     let store = temp.path().join("store");
 
-    dexrs(&store)
+    dexrust(&store)
         .args(["create", "Json task"])
         .assert()
         .success();
@@ -205,7 +208,7 @@ fn read_commands_support_json_output() {
         vec!["list", "--json"],
         vec!["show", &id, "--json"],
     ] {
-        let output = dexrs(&store)
+        let output = dexrust(&store)
             .args(args)
             .assert()
             .success()
@@ -217,11 +220,11 @@ fn read_commands_support_json_output() {
 }
 
 #[test]
-fn dex_binary_matches_dexrs_for_dir() {
+fn dex_binary_matches_dexrust_for_dir() {
     let temp = tempfile::tempdir().unwrap();
     let store = temp.path().join("store");
 
-    let dexrs_output = dexrs(&store)
+    let dexrust_output = dexrust(&store)
         .arg("dir")
         .assert()
         .success()
@@ -239,7 +242,7 @@ fn dex_binary_matches_dexrs_for_dir() {
         .stdout
         .clone();
 
-    assert_eq!(dex_output, dexrs_output);
+    assert_eq!(dex_output, dexrust_output);
 }
 
 #[test]
@@ -247,7 +250,7 @@ fn create_writes_record_the_original_dex_schema_accepts() {
     let temp = tempfile::tempdir().unwrap();
     let store = temp.path().join("store");
 
-    dexrs(&store).args(["create", "Bare"]).assert().success();
+    dexrust(&store).args(["create", "Bare"]).assert().success();
 
     let raw = std::fs::read_to_string(store.join("tasks.jsonl")).unwrap();
     assert!(raw.contains(r#""description":"""#), "{raw}");
@@ -271,21 +274,21 @@ fn create_writes_record_the_original_dex_schema_accepts() {
     assert!(String::from_utf8_lossy(&output.stdout).contains("Bare"));
 }
 
-fn dexrs(store: &std::path::Path) -> assert_cmd::Command {
+fn dexrust(store: &std::path::Path) -> assert_cmd::Command {
     let mut command = bare(store);
     command.env("DEX_STORAGE_PATH", store);
     command
 }
 
 fn bare(scratch: &std::path::Path) -> assert_cmd::Command {
-    let mut command = assert_cmd::Command::cargo_bin("dexrs").unwrap();
+    let mut command = assert_cmd::Command::cargo_bin("dexrust").unwrap();
     command.env("DEX_HOME", scratch.join("dex-home"));
     command.env_remove("DEX_STORAGE_PATH");
     command
 }
 
 fn create(store: &std::path::Path, args: &[&str]) -> String {
-    let output = dexrs(store)
+    let output = dexrust(store)
         .arg("create")
         .args(args)
         .assert()
@@ -310,7 +313,7 @@ fn complete_accepts_result_flag_and_marks_started() {
     let store = temp.path().join("store");
     let id = create(&store, &["Finish me"]);
 
-    dexrs(&store)
+    dexrust(&store)
         .args(["complete", &id, "--result", "all done"])
         .assert()
         .success();
@@ -327,7 +330,7 @@ fn complete_short_result_flag_and_no_commit_are_accepted() {
     let store = temp.path().join("store");
     let id = create(&store, &["Finish me"]);
 
-    dexrs(&store)
+    dexrust(&store)
         .args(["complete", &id, "-r", "short", "--no-commit"])
         .assert()
         .success();
@@ -341,7 +344,7 @@ fn complete_requires_result() {
     let store = temp.path().join("store");
     let id = create(&store, &["Finish me"]);
 
-    dexrs(&store)
+    dexrust(&store)
         .args(["complete", &id])
         .assert()
         .failure()
@@ -384,7 +387,7 @@ fn complete_with_commit_records_commit_metadata() {
     let sha = git_repo_with_commit(temp.path());
     let id = create(&store, &["Finish me"]);
 
-    dexrs(&store)
+    dexrust(&store)
         .current_dir(temp.path())
         .args(["complete", &id, "-r", "done", "--commit", &sha[..7]])
         .assert()
@@ -405,7 +408,7 @@ fn complete_with_unknown_commit_fails_without_changes() {
     git_repo_with_commit(temp.path());
     let id = create(&store, &["Finish me"]);
 
-    dexrs(&store)
+    dexrust(&store)
         .current_dir(temp.path())
         .args(["complete", &id, "-r", "done", "--commit", "0000000"])
         .assert()
@@ -442,7 +445,7 @@ fn create_with_missing_parent_fails() {
     let temp = tempfile::tempdir().unwrap();
     let store = temp.path().join("store");
 
-    dexrs(&store)
+    dexrust(&store)
         .args(["create", "Orphan", "--parent", "nope1234"])
         .assert()
         .failure()
@@ -479,7 +482,7 @@ fn edit_parent_moves_task_between_parents() {
     let new_parent = create(&store, &["New"]);
     let child = create(&store, &["Child", "--parent", &old_parent]);
 
-    dexrs(&store)
+    dexrust(&store)
         .args(["edit", &child, "--parent", &new_parent])
         .assert()
         .success();
@@ -500,7 +503,7 @@ fn edit_adds_and_removes_blockers() {
     let other = create(&store, &["Other"]);
     let blocked = create(&store, &["Blocked"]);
 
-    dexrs(&store)
+    dexrust(&store)
         .args([
             "edit",
             &blocked,
@@ -515,7 +518,7 @@ fn edit_adds_and_removes_blockers() {
     );
     assert_eq!(task(&store, &blocker).blocks, vec![blocked.clone()]);
 
-    dexrs(&store)
+    dexrust(&store)
         .args(["edit", &blocked, "--remove-blocker", &blocker])
         .assert()
         .success();
@@ -530,7 +533,7 @@ fn edit_short_name_flag_and_commit_link() {
     let sha = git_repo_with_commit(temp.path());
     let id = create(&store, &["Before"]);
 
-    dexrs(&store)
+    dexrust(&store)
         .current_dir(temp.path())
         .args(["edit", &id, "-n", "After", "--commit", &sha])
         .assert()
@@ -542,7 +545,7 @@ fn edit_short_name_flag_and_commit_link() {
 }
 
 fn list(store: &std::path::Path, args: &[&str]) -> String {
-    let output = dexrs(store)
+    let output = dexrust(store)
         .arg("list")
         .args(args)
         .assert()
@@ -559,7 +562,7 @@ fn list_hides_completed_unless_asked() {
     let store = temp.path().join("store");
     let open = create(&store, &["Open"]);
     let done = create(&store, &["Done"]);
-    dexrs(&store)
+    dexrust(&store)
         .args(["complete", &done, "-r", "x"])
         .assert()
         .success();
@@ -606,7 +609,7 @@ fn list_shows_blocker_indicator_only_while_blocker_is_open() {
 
     assert!(list(&store, &[]).contains(&format!("{blocked} [B: {blocker}]: Blocked")));
 
-    dexrs(&store)
+    dexrust(&store)
         .args(["complete", &blocker, "-r", "x"])
         .assert()
         .success();
@@ -620,7 +623,7 @@ fn list_filters_ready_blocked_and_in_progress() {
     let ready = create(&store, &["Ready"]);
     let started = create(&store, &["Started"]);
     let blocked = create(&store, &["Blocked", "--blocked-by", &ready]);
-    dexrs(&store).args(["start", &started]).assert().success();
+    dexrust(&store).args(["start", &started]).assert().success();
 
     let output = list(&store, &["--ready"]);
     assert!(
@@ -648,7 +651,7 @@ fn list_filter_keeps_ancestors_for_context() {
     let parent = create(&store, &["Parent"]);
     let child = create(&store, &["Child", "--parent", &parent]);
     let sibling = create(&store, &["Sibling", "--parent", &parent]);
-    dexrs(&store).args(["start", &child]).assert().success();
+    dexrust(&store).args(["start", &child]).assert().success();
 
     let output = list(&store, &["--in-progress"]);
 
@@ -707,12 +710,12 @@ fn show_prints_several_tasks_with_context_sections() {
     let store = temp.path().join("store");
     let parent = create(&store, &["Parent", "-d", "parent details"]);
     let child = create(&store, &["Child", "--parent", &parent]);
-    dexrs(&store)
+    dexrust(&store)
         .args(["complete", &child, "-r", "child result"])
         .assert()
         .success();
 
-    let output = dexrs(&store)
+    let output = dexrust(&store)
         .args(["show", &parent, &child])
         .assert()
         .success()
@@ -748,7 +751,7 @@ fn show_truncates_long_text_unless_full() {
     let long = "x".repeat(2000);
     let id = create(&store, &["Long", "-d", &long]);
 
-    let short = dexrs(&store)
+    let short = dexrust(&store)
         .args(["show", &id])
         .assert()
         .success()
@@ -762,9 +765,9 @@ fn show_truncates_long_text_unless_full() {
     );
 
     for flag in ["--full", "-f", "--expand", "-e"] {
-        dexrs(&store).args(["show", &id, flag]).assert().success();
+        dexrust(&store).args(["show", &id, flag]).assert().success();
     }
-    let full = dexrs(&store)
+    let full = dexrust(&store)
         .args(["show", &id, "--full"])
         .assert()
         .success()
@@ -779,10 +782,10 @@ fn start_refuses_in_progress_task_unless_forced() {
     let temp = tempfile::tempdir().unwrap();
     let store = temp.path().join("store");
     let id = create(&store, &["Claim me"]);
-    dexrs(&store).args(["start", &id]).assert().success();
+    dexrust(&store).args(["start", &id]).assert().success();
     let first_start = task(&store, &id).started_at.unwrap();
 
-    dexrs(&store)
+    dexrust(&store)
         .args(["start", &id])
         .assert()
         .failure()
@@ -793,12 +796,15 @@ fn start_refuses_in_progress_task_unless_forced() {
     assert_eq!(task(&store, &id).started_at.unwrap(), first_start);
 
     std::thread::sleep(std::time::Duration::from_millis(5));
-    dexrs(&store)
+    dexrust(&store)
         .args(["start", &id, "--force"])
         .assert()
         .success();
     assert_ne!(task(&store, &id).started_at.unwrap(), first_start);
-    dexrs(&store).args(["start", &id, "-f"]).assert().success();
+    dexrust(&store)
+        .args(["start", &id, "-f"])
+        .assert()
+        .success();
 }
 
 #[test]
@@ -810,14 +816,14 @@ fn delete_with_subtasks_requires_force_and_removes_subtree() {
     let grandchild = create(&store, &["Grandchild", "--parent", &child]);
     let other = create(&store, &["Other"]);
 
-    dexrs(&store)
+    dexrust(&store)
         .args(["delete", &parent])
         .assert()
         .failure()
         .stderr(predicates::str::contains("2 subtasks").and(predicates::str::contains("--force")));
     assert_eq!(read_tasks(&store).len(), 4);
 
-    dexrs(&store)
+    dexrust(&store)
         .args(["delete", &parent, "-f"])
         .assert()
         .success()
@@ -835,21 +841,26 @@ fn status_is_the_default_command() {
     let store = temp.path().join("store");
     create(&store, &["Only"]);
 
-    let explicit = dexrs(&store)
+    let explicit = dexrust(&store)
         .arg("status")
         .assert()
         .success()
         .get_output()
         .stdout
         .clone();
-    let default = dexrs(&store).assert().success().get_output().stdout.clone();
+    let default = dexrust(&store)
+        .assert()
+        .success()
+        .get_output()
+        .stdout
+        .clone();
 
     assert_eq!(default, explicit);
     assert!(!explicit.is_empty());
 }
 
 fn status(store: &std::path::Path, args: &[&str]) -> String {
-    let output = dexrs(store)
+    let output = dexrust(store)
         .arg("status")
         .args(args)
         .assert()
@@ -877,11 +888,11 @@ fn dashboard_fixture(store: &std::path::Path) -> [String; 5] {
     let ready = create(store, &["Child two", "--parent", &parent]);
     let blocked = create(store, &["Blocked", "--blocked-by", &started, "-p", "3"]);
     let done = create(store, &["Done already"]);
-    dexrs(store)
+    dexrust(store)
         .args(["complete", &done, "-r", "finished"])
         .assert()
         .success();
-    dexrs(store).args(["start", &started]).assert().success();
+    dexrust(store).args(["start", &started]).assert().success();
     [parent, started, ready, blocked, done]
 }
 
@@ -960,7 +971,7 @@ fn plan_creates_task_named_after_first_heading_with_file_as_description() {
     let body = "# Add user auth\n\nIntro.\n\n## Requirements\n\n- JWT\n";
     std::fs::write(&plan, body).unwrap();
 
-    let output = dexrs(&store)
+    let output = dexrust(&store)
         .args(["plan", plan.to_str().unwrap(), "-p", "2"])
         .assert()
         .success()
@@ -990,7 +1001,7 @@ fn plan_without_heading_uses_file_stem_and_links_parent() {
     let plan = temp.path().join("rollout-steps.md");
     std::fs::write(&plan, "just a body\n").unwrap();
 
-    dexrs(&store)
+    dexrust(&store)
         .args(["plan", plan.to_str().unwrap(), "--parent", &parent])
         .assert()
         .success();
@@ -1009,7 +1020,7 @@ fn plan_with_missing_file_fails_without_creating_a_task() {
     let temp = tempfile::tempdir().unwrap();
     let store = temp.path().join("store");
 
-    dexrs(&store)
+    dexrust(&store)
         .args(["plan", "nope.md"])
         .assert()
         .failure()
@@ -1019,7 +1030,7 @@ fn plan_with_missing_file_fails_without_creating_a_task() {
 }
 
 fn complete(store: &std::path::Path, id: &str) {
-    dexrs(store)
+    dexrust(store)
         .args(["complete", id, "-r", &format!("result of {id}")])
         .assert()
         .success();
@@ -1044,7 +1055,7 @@ fn archive_moves_completed_task_to_compact_archive_record() {
     );
     complete(&store, &done);
 
-    dexrs(&store)
+    dexrust(&store)
         .args(["archive", &done])
         .assert()
         .success()
@@ -1083,29 +1094,29 @@ fn archive_refuses_incomplete_task_descendant_or_ancestor() {
     let done_child = create(&store, &["Done child", "--parent", &open]);
     complete(&store, &done_child);
 
-    dexrs(&store)
+    dexrust(&store)
         .args(["archive", &open])
         .assert()
         .failure()
         .stderr(predicates::str::contains("not completed"));
 
-    dexrs(&store)
+    dexrust(&store)
         .args(["complete", &parent, "-r", "forced", "--force"])
         .assert()
         .success();
-    dexrs(&store)
+    dexrust(&store)
         .args(["archive", &parent])
         .assert()
         .failure()
         .stderr(predicates::str::contains(&child));
 
-    dexrs(&store)
+    dexrust(&store)
         .args(["archive", &done_child])
         .assert()
         .failure()
         .stderr(predicates::str::contains("incomplete ancestor"));
 
-    dexrs(&store)
+    dexrust(&store)
         .args(["archive", "zzzzzzzz"])
         .assert()
         .failure()
@@ -1126,7 +1137,7 @@ fn archive_subtree_writes_a_record_per_task_with_child_summaries() {
         complete(&store, id);
     }
 
-    dexrs(&store)
+    dexrust(&store)
         .args(["archive", &parent])
         .assert()
         .success()
@@ -1170,7 +1181,7 @@ fn archive_completed_skips_tasks_under_open_parents_and_honours_except() {
         complete(&store, id);
     }
 
-    dexrs(&store)
+    dexrust(&store)
         .args(["archive", "--completed", "--except", &kept])
         .assert()
         .success()
@@ -1185,14 +1196,14 @@ fn archive_completed_skips_tasks_under_open_parents_and_honours_except() {
     assert_eq!(remaining.len(), 3);
     assert_eq!(archive_records(&store).len(), 2);
 
-    dexrs(&store)
+    dexrust(&store)
         .args(["archive", "--completed"])
         .assert()
         .success()
         .stdout(predicates::str::starts_with(
             "Archived 1 task (1 root task)\n",
         ));
-    dexrs(&store)
+    dexrust(&store)
         .args(["archive", "--completed"])
         .assert()
         .success()
@@ -1215,17 +1226,17 @@ fn archive_older_than_filters_by_completion_age_and_validates_duration() {
         .completed_at = Some("2020-01-01T00:00:00Z".to_string());
     std::fs::write(
         store.join("tasks.jsonl"),
-        dexrs::task::serialize_tasks_jsonl(&tasks).unwrap(),
+        dexrust::task::serialize_tasks_jsonl(&tasks).unwrap(),
     )
     .unwrap();
 
-    dexrs(&store)
+    dexrust(&store)
         .args(["archive", "--older-than", "5x"])
         .assert()
         .failure()
         .stderr(predicates::str::contains("Invalid duration"));
 
-    dexrs(&store)
+    dexrust(&store)
         .args(["archive", "--older-than", "60d"])
         .assert()
         .success()
@@ -1236,7 +1247,7 @@ fn archive_older_than_filters_by_completion_age_and_validates_duration() {
     assert_eq!(archive_records(&store)[0]["id"], old);
 
     for duration in ["1w", "1m"] {
-        dexrs(&store)
+        dexrust(&store)
             .args(["archive", "--older-than", duration])
             .assert()
             .success()
@@ -1252,7 +1263,7 @@ fn archive_dry_run_reports_without_changing_files() {
     complete(&store, &done);
     let before = std::fs::read_to_string(store.join("tasks.jsonl")).unwrap();
 
-    dexrs(&store)
+    dexrust(&store)
         .args(["archive", "--completed", "--dry-run"])
         .assert()
         .success()
@@ -1275,8 +1286,11 @@ fn list_archived_shows_archive_newest_first_and_show_reads_archived_task() {
     for id in [&first, &child, &parent] {
         complete(&store, id);
     }
-    dexrs(&store).args(["archive", &first]).assert().success();
-    dexrs(&store).args(["archive", &parent]).assert().success();
+    dexrust(&store).args(["archive", &first]).assert().success();
+    dexrust(&store)
+        .args(["archive", &parent])
+        .assert()
+        .success();
 
     let output = list(&store, &["--archived"]);
     assert!(
@@ -1299,7 +1313,7 @@ fn list_archived_shows_archive_newest_first_and_show_reads_archived_task() {
     assert_eq!(json.as_array().unwrap().len(), 3);
     assert!(json[0]["archived_at"].is_string());
 
-    let shown = dexrs(&store)
+    let shown = dexrust(&store)
         .args(["show", &first])
         .assert()
         .success()
@@ -1340,7 +1354,7 @@ fn write_metadata(store: &std::path::Path, id: &str, metadata: serde_json::Value
         .metadata = Some(metadata);
     std::fs::write(
         store.join("tasks.jsonl"),
-        dexrs::task::serialize_tasks_jsonl(&tasks).unwrap(),
+        dexrust::task::serialize_tasks_jsonl(&tasks).unwrap(),
     )
     .unwrap();
 }
@@ -1352,7 +1366,7 @@ fn list_commit_finds_task_by_sha_prefix_including_completed() {
     let sha = git_repo_with_commit(temp.path());
     let linked = create(&store, &["Linked"]);
     let other = create(&store, &["Other"]);
-    dexrs(&store)
+    dexrust(&store)
         .current_dir(temp.path())
         .args(["complete", &linked, "-r", "done", "--commit", &sha])
         .assert()
@@ -1391,7 +1405,7 @@ fn list_issue_finds_task_by_github_issue_and_shows_indicator() {
 #[test]
 fn completion_generates_script_named_after_invoked_binary() {
     for (binary, shell, marker) in [
-        ("dexrs", "zsh", "#compdef dexrs"),
+        ("dexrust", "zsh", "#compdef dexrust"),
         ("dex", "zsh", "#compdef dex"),
         ("dex", "bash", "complete -F _dex"),
         ("dex", "fish", "complete -c dex"),
@@ -1404,7 +1418,7 @@ fn completion_generates_script_named_after_invoked_binary() {
             .stdout(predicates::str::contains(marker));
     }
 
-    assert_cmd::Command::cargo_bin("dexrs")
+    assert_cmd::Command::cargo_bin("dexrust")
         .unwrap()
         .args(["completion", "powershell7"])
         .assert()
@@ -1443,7 +1457,7 @@ fn dir_global_prints_dex_home_from_env_or_xdg_or_home() {
         .success()
         .stdout(format!("{}\n", temp.path().join("dex-home").display()));
 
-    assert_cmd::Command::cargo_bin("dexrs")
+    assert_cmd::Command::cargo_bin("dexrust")
         .unwrap()
         .env_remove("DEX_HOME")
         .env("XDG_CONFIG_HOME", temp.path().join("xdg"))
@@ -1453,7 +1467,7 @@ fn dir_global_prints_dex_home_from_env_or_xdg_or_home() {
         .success()
         .stdout(format!("{}\n", temp.path().join("xdg/dex").display()));
 
-    assert_cmd::Command::cargo_bin("dexrs")
+    assert_cmd::Command::cargo_bin("dexrust")
         .unwrap()
         .env_remove("DEX_HOME")
         .env_remove("XDG_CONFIG_HOME")
@@ -1716,7 +1730,7 @@ fn config_command_gets_sets_unsets_and_lists() {
 }
 
 fn show_text(store: &std::path::Path, args: &[&str]) -> String {
-    let out = dexrs(store)
+    let out = dexrust(store)
         .arg("show")
         .args(args)
         .assert()
@@ -1742,7 +1756,7 @@ fn show_json_is_enriched_like_original() {
     let blocker_done = create(&store, &["Blocker done"]);
     let blocker_open = create(&store, &["Blocker open"]);
     let downstream = create(&store, &["Downstream", "--blocked-by", &mid]);
-    dexrs(&store)
+    dexrust(&store)
         .args([
             "edit",
             &mid,
@@ -1807,7 +1821,7 @@ fn show_json_is_enriched_like_original() {
     assert_eq!(both[1]["depth"], 2);
 
     complete(&store, &blocker_open);
-    dexrs(&store)
+    dexrust(&store)
         .args(["archive", &blocker_open])
         .assert()
         .success();
@@ -1827,12 +1841,12 @@ fn show_text_sections_match_original_layout() {
     let child_done = create(&store, &["Child done", "--parent", &mid]);
     let child_open = create(&store, &["Child open", "--parent", &mid]);
     let blocker = create(&store, &["Blocker"]);
-    dexrs(&store)
+    dexrust(&store)
         .args(["edit", &mid, "--add-blocker", &blocker, "-d", "mid details"])
         .assert()
         .success();
     complete(&store, &child_done);
-    dexrs(&store)
+    dexrust(&store)
         .current_dir(temp.path())
         .args(["edit", &mid, "--commit", &sha])
         .assert()
@@ -1949,7 +1963,7 @@ fn mutations_print_original_wording_and_task_card() {
     let store = temp.path().join("store");
 
     let created = stdout_of(
-        dexrs(&store)
+        dexrust(&store)
             .args(["create", "Card", "-d", "card details"])
             .assert()
             .success(),
@@ -1969,7 +1983,7 @@ fn mutations_print_original_wording_and_task_card() {
         "{created}"
     );
 
-    let started = stdout_of(dexrs(&store).args(["start", &id]).assert().success());
+    let started = stdout_of(dexrust(&store).args(["start", &id]).assert().success());
     assert!(
         started.starts_with(&format!("Started task {id}\n[>] {id}: Card\n")),
         "{started}"
@@ -1977,7 +1991,7 @@ fn mutations_print_original_wording_and_task_card() {
     assert!(started.contains("\nStarted:   "), "{started}");
 
     let edited = stdout_of(
-        dexrs(&store)
+        dexrust(&store)
             .args(["edit", &id, "-n", "Renamed", "-p", "2"])
             .assert()
             .success(),
@@ -1988,7 +2002,7 @@ fn mutations_print_original_wording_and_task_card() {
     );
 
     let completed = stdout_of(
-        dexrs(&store)
+        dexrust(&store)
             .args(["complete", &id, "-r", "all good"])
             .assert()
             .success(),
@@ -1996,7 +2010,7 @@ fn mutations_print_original_wording_and_task_card() {
     assert!(completed.starts_with(&format!("Completed task {id}\n[x] {id} [p2]: Renamed\n\nDescription:\n  card details\n\nResult:\n  all good\n")), "{completed}");
     assert!(completed.contains("\nCompleted: "), "{completed}");
 
-    let deleted = stdout_of(dexrs(&store).args(["delete", &id]).assert().success());
+    let deleted = stdout_of(dexrust(&store).args(["delete", &id]).assert().success());
     assert_eq!(deleted, format!("Deleted task {id}\n"));
 }
 
@@ -2009,7 +2023,7 @@ fn completing_last_subtask_hints_at_parent() {
     let second = create(&store, &["Second", "--parent", &parent]);
 
     let output = stdout_of(
-        dexrs(&store)
+        dexrust(&store)
             .args(["complete", &first, "-r", "x"])
             .assert()
             .success(),
@@ -2017,7 +2031,7 @@ fn completing_last_subtask_hints_at_parent() {
     assert!(!output.contains("Hint:"), "{output}");
 
     let output = stdout_of(
-        dexrs(&store)
+        dexrust(&store)
             .args(["complete", &second, "-r", "x"])
             .assert()
             .success(),
@@ -2035,7 +2049,7 @@ fn completing_blocked_task_warns_but_proceeds() {
     let blocked = create(&store, &["Blocked", "--blocked-by", &blocker]);
 
     let output = stdout_of(
-        dexrs(&store)
+        dexrust(&store)
             .args(["complete", &blocked, "-r", "anyway"])
             .assert()
             .success(),
@@ -2070,7 +2084,7 @@ fn complete_requires_commit_decision_for_linked_leaf_tasks() {
         serde_json::json!({"shortcut": {"storyId": 99}}),
     );
 
-    dexrs(&store)
+    dexrust(&store)
         .args(["complete", &linked, "-r", "done"])
         .assert()
         .failure()
@@ -2080,18 +2094,18 @@ fn complete_requires_commit_decision_for_linked_leaf_tasks() {
         );
     assert!(!task(&store, &linked).completed);
 
-    dexrs(&store)
+    dexrust(&store)
         .args(["complete", &story, "-r", "done"])
         .assert()
         .failure()
         .stderr(predicates::str::contains("linked to Shortcut story"));
 
-    dexrs(&store)
+    dexrust(&store)
         .args(["complete", &linked, "-r", "done", "--no-commit"])
         .assert()
         .success();
     complete(&store, &child);
-    dexrs(&store)
+    dexrust(&store)
         .args(["complete", &linked_parent, "-r", "done"])
         .assert()
         .success();
@@ -2103,7 +2117,7 @@ fn complete_rejects_commit_together_with_no_commit() {
     let store = temp.path().join("store");
     let id = create(&store, &["Both"]);
 
-    dexrs(&store)
+    dexrust(&store)
         .args(["complete", &id, "-r", "x", "--commit", "abc", "--no-commit"])
         .assert()
         .failure();
@@ -2178,7 +2192,7 @@ fn hierarchy_depth_is_limited_to_three_levels() {
     let task_ = create(&store, &["Task", "--parent", &epic]);
     let subtask = create(&store, &["Subtask", "--parent", &task_]);
 
-    dexrs(&store)
+    dexrust(&store)
         .args(["create", "Too deep", "--parent", &subtask])
         .assert()
         .failure()
@@ -2186,7 +2200,7 @@ fn hierarchy_depth_is_limited_to_three_levels() {
 
     let loose = create(&store, &["Loose"]);
     let loose_child = create(&store, &["Loose child", "--parent", &loose]);
-    dexrs(&store)
+    dexrust(&store)
         .args(["edit", &loose, "--parent", &task_])
         .assert()
         .failure()
@@ -2195,7 +2209,7 @@ fn hierarchy_depth_is_limited_to_three_levels() {
         task(&store, &loose_child).parent_id.as_deref(),
         Some(loose.as_str())
     );
-    dexrs(&store)
+    dexrust(&store)
         .args(["edit", &loose, "--parent", &epic])
         .assert()
         .success();
@@ -2244,7 +2258,7 @@ fn auto_archive_runs_on_write_when_enabled() {
     }
     std::fs::write(
         store.join("tasks.jsonl"),
-        dexrs::task::serialize_tasks_jsonl(&tasks).unwrap(),
+        dexrust::task::serialize_tasks_jsonl(&tasks).unwrap(),
     )
     .unwrap();
 
@@ -2295,7 +2309,7 @@ fn help_and_version_subcommands_and_unknown_command_suggestion() {
     );
 
     let version = stdout_of(bare(temp.path()).arg("version").assert().success());
-    assert_eq!(version, format!("dexrs v{}\n", env!("CARGO_PKG_VERSION")));
+    assert_eq!(version, format!("dexrust v{}\n", env!("CARGO_PKG_VERSION")));
 
     bare(temp.path()).arg("lisst").assert().failure().stderr(
         predicates::str::contains("Unknown command: lisst")
@@ -2360,7 +2374,7 @@ fn doctor_reports_clean_store_and_fixes_dangling_references() {
         .clear();
     std::fs::write(
         store.join("tasks.jsonl"),
-        dexrs::task::serialize_tasks_jsonl(&tasks).unwrap(),
+        dexrust::task::serialize_tasks_jsonl(&tasks).unwrap(),
     )
     .unwrap();
     std::fs::create_dir_all(temp.path().join("dex-home")).unwrap();
@@ -2440,19 +2454,33 @@ fn doctor_detects_tasks_left_in_the_other_storage_mode() {
 }
 
 #[test]
-fn version_identifies_dexrs_even_when_invoked_as_dex() {
+fn version_identifies_dexrust_from_both_binaries() {
     let temp = tempfile::tempdir().unwrap();
-    let expected = format!("dexrs v{}\n", env!("CARGO_PKG_VERSION"));
-    for args in [vec!["version"], vec!["--version"], vec!["-V"]] {
-        let out = assert_cmd::Command::cargo_bin("dex")
-            .unwrap()
-            .env("DEX_HOME", temp.path().join("dex-home"))
-            .args(&args)
-            .assert()
-            .success()
-            .get_output()
-            .stdout
-            .clone();
-        assert_eq!(String::from_utf8(out).unwrap(), expected, "args {args:?}");
+    let expected = format!("dexrust v{}\n", env!("CARGO_PKG_VERSION"));
+    for binary in ["dexrust", "dex"] {
+        for args in [vec!["version"], vec!["--version"], vec!["-V"]] {
+            let out = assert_cmd::Command::cargo_bin(binary)
+                .unwrap()
+                .env("DEX_HOME", temp.path().join("dex-home"))
+                .args(&args)
+                .assert()
+                .success()
+                .get_output()
+                .stdout
+                .clone();
+            assert_eq!(
+                String::from_utf8(out).unwrap(),
+                expected,
+                "binary {binary}, args {args:?}"
+            );
+        }
     }
+}
+
+#[test]
+fn canonical_help_uses_dexrust_name() {
+    let temp = tempfile::tempdir().unwrap();
+    let help = stdout_of(dexrust(temp.path()).arg("help").assert().success());
+    assert!(help.contains("USAGE:\n  dexrust"), "{help}");
+    assert!(!help.contains("dexrs"), "{help}");
 }

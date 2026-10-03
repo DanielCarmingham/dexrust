@@ -37,7 +37,7 @@ where
         .map(std::path::Path::new)
         .and_then(std::path::Path::file_stem)
         .map(|stem| stem.to_string_lossy().into_owned())
-        .unwrap_or_else(|| "dexrs".to_string());
+        .unwrap_or_else(|| "dexrust".to_string());
     let cli = match Cli::try_parse_from(&args) {
         Ok(cli) => cli,
         Err(error) if error.kind() == clap::error::ErrorKind::InvalidSubcommand => {
@@ -89,8 +89,8 @@ where
             Ok(0)
         }
         Command::Version => {
-            // Always the real name: `dex version` must reveal it is dexrs.
-            writeln!(stdout, "dexrs v{}", env!("CARGO_PKG_VERSION"))?;
+            // Always the real name: `dex version` must reveal it is dexrust.
+            writeln!(stdout, "dexrust v{}", env!("CARGO_PKG_VERSION"))?;
             Ok(0)
         }
         Command::Doctor { fix } => {
@@ -347,7 +347,7 @@ where
             blocked_by,
         } => {
             let Some(name) = name.or(name_flag) else {
-                anyhow::bail!("task name is required\nUsage: dexrs create \"name\" [options]");
+                anyhow::bail!("task name is required\nUsage: dexrust create \"name\" [options]");
             };
             let store = resolved_store()?;
             let id = store::transact_with(&store, &write_options()?, |tasks| {
@@ -376,7 +376,7 @@ where
         } => {
             if id.is_none() && !completed && older_than.is_none() {
                 anyhow::bail!(
-                    "specify a task id, --completed, or --older-than <duration>\nUsage: dexrs archive <task-id> | --completed | --older-than 30d"
+                    "specify a task id, --completed, or --older-than <duration>\nUsage: dexrust archive <task-id> | --completed | --older-than 30d"
                 );
             }
             let cutoff = older_than
@@ -490,7 +490,7 @@ where
         } => {
             let Some(result) = result else {
                 anyhow::bail!(
-                    "--result (-r) is required\nUsage: dexrs complete <task-id> --result \"completion notes\""
+                    "--result (-r) is required\nUsage: dexrust complete <task-id> --result \"completion notes\""
                 );
             };
             let commit = commit

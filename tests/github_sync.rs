@@ -1,6 +1,6 @@
-use dexrs::sync::github::remote::GitHubRepo;
-use dexrs::sync::github::service::{GitHubSyncService, Phase};
-use dexrs::task::Task;
+use dexrust::sync::github::remote::GitHubRepo;
+use dexrust::sync::github::service::{GitHubSyncService, Phase};
+use dexrust::task::Task;
 use mockito::{Matcher, Server, ServerGuard};
 
 fn task(id: &str, name: &str, parent: Option<&str>) -> Task {
@@ -161,7 +161,7 @@ fn existing_issue_is_skipped_when_unchanged_and_patched_when_changed() {
     );
     let tasks = vec![root.clone()];
     let svc = service(&server, temp.path());
-    let expected_body = dexrs::sync::github::body::render_root_body(&root, &[]);
+    let expected_body = dexrust::sync::github::body::render_root_body(&root, &[]);
 
     let unchanged = server
         .mock("GET", "/repos/acme/widgets/issues/5")
@@ -244,11 +244,11 @@ fn sync_all_pulls_newer_remote_state_and_reports_progress() {
     remote_child.completed = true;
     remote_child.completed_at = Some("2026-02-01T00:00:00.000Z".into());
     remote_child.result = Some("child done remotely".into());
-    let descendants = dexrs::sync::github::body::collect_descendants(
+    let descendants = dexrust::sync::github::body::collect_descendants(
         &[remote_root.clone(), remote_child.clone()],
         "root0001",
     );
-    let remote_body = dexrs::sync::github::body::render_root_body(&remote_root, &descendants);
+    let remote_body = dexrust::sync::github::body::render_root_body(&remote_root, &descendants);
 
     let list = server
         .mock("GET", "/repos/acme/widgets/issues")
@@ -349,13 +349,13 @@ fn applying_sync_metadata_keeps_updated_at_so_repeat_syncs_are_unchanged() {
     let mut task = task("root0001", "Root", None);
     task.description = "context".into();
     let mut tasks = vec![task.clone()];
-    let result = dexrs::sync::github::service::SyncResult::new_public(
+    let result = dexrust::sync::github::service::SyncResult::new_public(
         "root0001",
         serde_json::json!({"issueNumber": 5, "issueUrl": "u", "repo": "acme/widgets", "state": "open"}),
         true,
     );
 
-    dexrs::sync::registry::apply_result(&mut tasks, "github", &result).unwrap();
+    dexrust::sync::registry::apply_result(&mut tasks, "github", &result).unwrap();
 
     assert_eq!(
         tasks[0].metadata.as_ref().unwrap()["github"]["issueNumber"],

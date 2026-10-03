@@ -1,6 +1,6 @@
-use dexrs::sync::shortcut::service::ShortcutSyncService;
-use dexrs::sync::shortcut::story::render_story_description;
-use dexrs::task::Task;
+use dexrust::sync::shortcut::service::ShortcutSyncService;
+use dexrust::sync::shortcut::story::render_story_description;
+use dexrust::task::Task;
 use mockito::{Matcher, Server, ServerGuard};
 
 fn task(id: &str, name: &str, parent: Option<&str>) -> Task {
