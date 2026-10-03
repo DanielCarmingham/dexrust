@@ -17,6 +17,7 @@ exclude = [
     "AGENTS.md",
     "backlog.md",
     ".github/",
+    "compat/",
     "dist-workspace.toml",
     "docs/",
     ".gitignore",

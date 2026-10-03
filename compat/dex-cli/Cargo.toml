@@ -1,0 +1,24 @@
+[package]
+name = "dex-cli"
+version = "0.1.3"
+edition = "2024"
+rust-version = "1.88"
+description = "Deprecated compatibility package; install dexrust instead"
+license = "MIT"
+repository = "https://github.com/DanielCarmingham/dexrust"
+homepage = "https://github.com/DanielCarmingham/dexrust"
+readme = "README.md"
+keywords = ["tasks", "dex", "cli"]
+categories = ["command-line-utilities", "development-tools"]
+
+[dependencies]
+anyhow = "1.0"
+dexrust = "=0.2.0"
+
+[[bin]]
+name = "dex"
+path = "src/bin/dex.rs"
+
+[[bin]]
+name = "dexrs"
+path = "src/bin/dexrs.rs"
