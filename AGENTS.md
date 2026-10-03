@@ -2,8 +2,8 @@
 
 ## Project Purpose
 
-dexrs is a Rust replacement for the local dex CLI workflow. The first milestone
-is a source-installable MVP that can be called as either `dexrs` or `dex`, uses
+dexrust is a Rust replacement for the local dex CLI workflow. The first milestone
+is a source-installable MVP that can be called as either `dexrust` or `dex`, uses
 dex-compatible JSONL task storage, and fixes concurrent writer corruption.
 
 ## Task Tracking
@@ -30,7 +30,7 @@ Key requirements:
 - Wrap every mutating command in an exclusive cross-process locked transaction.
 - Write JSONL via temp file, fsync, atomic rename, and directory sync where
   supported.
-- Install a canonical `dexrs` binary and a compatibility `dex` binary that runs
+- Install a canonical `dexrust` binary and a compatibility `dex` binary that runs
   the same CLI code.
 - Do not modify, uninstall, or move the user's existing npm/pnpm dex
   installation unless explicitly asked.
@@ -62,9 +62,8 @@ MVP.
 
 ## Releasing
 
-The crate is published as **`dex-cli`** (the `dexrs` name on crates.io belongs
-to an unrelated Dexcom library); the binaries it installs are still `dexrs` and
-`dex`. A release goes out on three channels: crates.io, a GitHub Release with
+The crate is published as **`dexrust`**; the binaries it installs are `dexrust`
+and `dex`. A release goes out on three channels: crates.io, a GitHub Release with
 prebuilt binaries for four targets, and a Homebrew formula pushed to
 `DanielCarmingham/homebrew-tap`. Only the first is manual.
 
@@ -85,7 +84,7 @@ cargo publish
 # 4. Tag the exact commit that was published; the push triggers release.yml.
 git tag v<version>
 git push origin main v<version>
-gh run watch --repo DanielCarmingham/dexrs
+gh run watch --repo DanielCarmingham/dexrust
 ```
 
 `release.yml` is generated from `dist-workspace.toml` by `dist generate`;

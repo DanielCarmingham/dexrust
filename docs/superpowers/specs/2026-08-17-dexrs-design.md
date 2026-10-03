@@ -1,5 +1,8 @@
 # dexrs MVP Design
 
+> Historical design written under the former `dexrs` name. The project is now
+> `dexrust`; this document preserves the original MVP decisions.
+
 ## Goal
 
 Build a Rust implementation of the local dex CLI workflow that agents can call
@@ -160,4 +163,3 @@ Likely dependencies:
 
 The first milestone is source installable with `cargo install --path .`, placing
 both `dexrs` and `dex` in Cargo's bin directory.
-

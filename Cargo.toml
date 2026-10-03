@@ -25,6 +25,11 @@ exclude = [
 # would only need 1.85.
 rust-version = "1.88"
 
+[package.metadata.binstall]
+pkg-url = "{ repo }/releases/download/v{ version }/{ name }-{ target }{ archive-suffix }"
+pkg-fmt = "txz"
+bin-dir = "{ name }-{ target }/{ bin }{ binary-ext }"
+
 [dependencies]
 anyhow = "1.0"
 base64 = "0.22"

@@ -1,7 +1,7 @@
-# dexrs Backlog
+# dexrust Backlog
 
 This project intentionally avoids using dex as the source of truth for its own
-work tracking. dexrs replaces dex behavior, including storage and command
+work tracking. dexrust replaces dex behavior, including storage and command
 semantics, so dogfooding dex here can hide or create failures while the CLI is
 incomplete.
 
@@ -51,8 +51,8 @@ Nothing. Full parity with dex v0.16 is the goal.
 - [x] Match mutation output wording and task cards, blocker warning, parent
       hint, and the `--commit`/`--no-commit` requirement for linked leaf tasks
 
-- [x] Write the dexrs MVP design spec
-- [x] Write the dexrs MVP implementation plan
+- [x] Write the original dexrs MVP design spec
+- [x] Write the original dexrs MVP implementation plan
 - [x] Scaffold the Rust CLI project
 - [x] Implement project-local store discovery
 - [x] Implement `init` and `dir`

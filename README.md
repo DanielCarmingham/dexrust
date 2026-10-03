@@ -1,4 +1,4 @@
-# dexrs
+# dexrust
 
 A Rust drop-in for the [dex](https://github.com/dcramer/dex) task CLI. It
 reads and writes the same `.dex/tasks.jsonl` store, config files, archive,
@@ -10,7 +10,7 @@ agents cannot lose each other's writes.
 
 dex is [David Cramer](https://github.com/dcramer)'s task tracker for coding
 agents, published on npm as [`@zeeg/dex`](https://www.npmjs.com/package/@zeeg/dex)
-and documented at [dex.rip](https://dex.rip/). dexrs is an independent
+and documented at [dex.rip](https://dex.rip/). dexrust is an independent
 reimplementation of its command-line interface in Rust. It tracks
 **dex v0.16** and reproduces its behaviour closely enough that the two can be
 swapped underneath the same store, skills, and instructions:
@@ -21,7 +21,7 @@ swapped underneath the same store, skills, and instructions:
   remote the other created.
 - Same command names, flags, output wording, and JSON shapes.
 
-Where dexrs deliberately differs, it says so in the changelog: writes are
+Where dexrust deliberately differs, it says so in the changelog: writes are
 locked and atomic, repeated syncs are idempotent, `delete` refuses instead of
 prompting, and `doctor` still runs when the config file is broken.
 
@@ -30,27 +30,28 @@ crate ships a `dex` binary purely so existing instructions keep working.
 
 ## Install
 
-The crate is published as `dex-cli` (the `dexrs` name on crates.io belongs to
-an unrelated library). Every route installs the same two binaries into
+The crate is published as `dexrust`. Every route installs the same two binaries into
 `~/.cargo/bin`:
 
 ```bash
-cargo install dex-cli
+cargo install dexrust
+# or, prebuilt binaries through cargo-binstall:
+cargo binstall dexrust
 # or
-brew install DanielCarmingham/tap/dex-cli
+brew install DanielCarmingham/tap/dexrust
 # or, prebuilt binaries via the shell installer from the latest GitHub Release:
 curl --proto '=https' --tlsv1.2 -LsSf \
-  https://github.com/DanielCarmingham/dexrs/releases/latest/download/dex-cli-installer.sh | sh
+  https://github.com/DanielCarmingham/dexrust/releases/latest/download/dexrust-installer.sh | sh
 # or from a checkout:
 cargo install --path .
 ```
 
-- `dexrs`: canonical binary
+- `dexrust`: canonical binary
 - `dex`: compatibility binary that runs the same CLI code
 
 Which `dex` runs depends on PATH order. Installing does not modify, move, or
 uninstall an existing npm/pnpm dex; remove that yourself (`pnpm remove -g
-@zeeg/dex`) to switch over. `dex version` always reports `dexrs v<version>`
+@zeeg/dex`) to switch over. `dex version` always reports `dexrust v<version>`
 so you can tell which one answered.
 
 ## Implemented Commands
@@ -112,7 +113,7 @@ The dex home is `DEX_HOME`, else `$XDG_CONFIG_HOME/dex`, else `~/.config/dex`.
 ## Testing Against the Original
 
 Set `DEX_REFERENCE_BIN` to the original dex executable to make the test suite
-also verify that a store written by dexrs is accepted by it:
+also verify that a store written by dexrust is accepted by it:
 
 ```bash
 DEX_REFERENCE_BIN="$(command -v dex)" cargo test

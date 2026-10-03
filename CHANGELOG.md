@@ -1,6 +1,6 @@
 # Changelog
 
-Notable changes to dexrs, in [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
+Notable changes to dexrust, in [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 format. Versions follow [semantic versioning](https://semver.org/spec/v2.0.0.html):
 a feature is a minor bump, a fix-only release is a patch.
 
@@ -14,19 +14,25 @@ placeholder line would ship as the notes.
 The link definitions sit here, above the sections, because dist treats
 everything after the last heading as part of the last release's notes.
 
-[Unreleased]: https://github.com/DanielCarmingham/dexrs/compare/v0.1.2...HEAD
-[0.1.2]: https://github.com/DanielCarmingham/dexrs/compare/v0.1.1...v0.1.2
-[0.1.1]: https://github.com/DanielCarmingham/dexrs/compare/v0.1.0...v0.1.1
-[0.1.0]: https://github.com/DanielCarmingham/dexrs/releases/tag/v0.1.0
+[Unreleased]: https://github.com/DanielCarmingham/dexrust/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/DanielCarmingham/dexrust/compare/v0.1.2...v0.2.0
+[0.1.2]: https://github.com/DanielCarmingham/dexrust/compare/v0.1.1...v0.1.2
+[0.1.1]: https://github.com/DanielCarmingham/dexrust/compare/v0.1.0...v0.1.1
+[0.1.0]: https://github.com/DanielCarmingham/dexrust/releases/tag/v0.1.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-03
+
 ### Changed
 
+- Renamed the project, repository, crate, and canonical binary from
+  `dexrs`/`dex-cli` to `dexrust`. The `dex` compatibility binary remains.
+- Added cargo-binstall metadata for the prebuilt GitHub Release archives.
 - README credits the original dex project and states the version tracked.
 - Repository root discovery walks up the directory tree for a `.git` entry,
   as the original does, instead of spawning `git rev-parse` twice per
-  command. `dexrs list` goes from about 39 ms to 12 ms.
+  command. `dexrust list` goes from about 39 ms to 12 ms.
 
 ## [0.1.2] - 2026-09-22
 
