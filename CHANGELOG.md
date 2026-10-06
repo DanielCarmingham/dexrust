@@ -14,13 +14,16 @@ placeholder line would ship as the notes.
 The link definitions sit here, above the sections, because dist treats
 everything after the last heading as part of the last release's notes.
 
-[Unreleased]: https://github.com/DanielCarmingham/dexrust/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/DanielCarmingham/dexrust/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/DanielCarmingham/dexrust/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/DanielCarmingham/dexrust/compare/v0.1.2...v0.2.0
 [0.1.2]: https://github.com/DanielCarmingham/dexrust/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/DanielCarmingham/dexrust/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/DanielCarmingham/dexrust/releases/tag/v0.1.0
 
 ## [Unreleased]
+
+## [0.2.1] - 2026-10-05
 
 ### Fixed
 
