@@ -22,6 +22,11 @@ everything after the last heading as part of the last release's notes.
 
 ## [Unreleased]
 
+### Fixed
+
+- `complete --result ""` is rejected as a missing result, as in the original
+  dex, instead of completing the task with empty notes.
+
 ## [0.2.0] - 2026-10-03
 
 ### Changed

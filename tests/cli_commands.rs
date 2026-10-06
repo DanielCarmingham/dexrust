@@ -353,6 +353,21 @@ fn complete_requires_result() {
     assert!(!read_tasks(&store)[0].completed);
 }
 
+#[test]
+fn complete_rejects_empty_result() {
+    let temp = tempfile::tempdir().unwrap();
+    let store = temp.path().join("store");
+    let id = create(&store, &["Finish me"]);
+
+    dexrust(&store)
+        .args(["complete", &id, "--result", ""])
+        .assert()
+        .failure()
+        .stderr(predicates::str::contains("--result"));
+
+    assert!(!read_tasks(&store)[0].completed);
+}
+
 fn git_repo_with_commit(dir: &std::path::Path) -> String {
     let git = |args: &[&str]| {
         let output = std::process::Command::new("git")

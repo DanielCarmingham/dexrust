@@ -488,7 +488,7 @@ where
             no_commit,
             force,
         } => {
-            let Some(result) = result else {
+            let Some(result) = result.filter(|result| !result.is_empty()) else {
                 anyhow::bail!(
                     "--result (-r) is required\nUsage: dexrust complete <task-id> --result \"completion notes\""
                 );
